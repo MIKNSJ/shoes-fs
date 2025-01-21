@@ -4,6 +4,24 @@
 
 
 
+*, *:hover {
+    scrollbar-color: auto;
+}
+
+
 :root {
     background-color: white;
+}
+
+
+html {
+    ::-webkit-scrollbar {
+        width: 0.25rem;
+        height: 0.25rem;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background-color: gray;
+        border-radius: 75px;
+    }
 }
