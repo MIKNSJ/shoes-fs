@@ -25,3 +25,34 @@ services:
     volumes:
       - ./server:/app
       - /app/node_modules
+    depends_on:
+      - database
+
+
+  database:
+    image: postgres:12-alpine3.20
+    container_name: pg_database
+    ports:
+      - 5432:5432
+    #restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password12345
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+
+
+  database_browser:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    user: root
+    ports:
+      - 80:80
+    #restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@test.com
+      PGADMIN_DEFAULT_PASSWORD: password12345
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+    depends_on:
+      - database

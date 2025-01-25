@@ -1,34 +1,89 @@
 import express from "express";
-//import cors from "cors";
+import { Prisma, PrismaClient } from '@prisma/client';
+import dotenv from "dotenv";
+import {generateToken} from "./middleware.js"
+import cookieParser from "cookie-parser";
 const app = express();
-const port = 8080
-/*const clientAddress = {
-    origin: ["http://localhost:5173/"],
-};
-app.use(cors(clientAddress));*/
+const port = 8080;
+const prisma = new PrismaClient();
 
 
 
-app.get("/", (req, res) => {
+dotenv.config(); // retrieve contents from .env
+app.use(cookieParser());
+app.use(express.json()); // for json
+app.use(express.urlencoded({ extended: true })); // for form data
+
+
+/*app.get("/", (req, res) => {
     res.send("Your nodemon server is currently active.");
-})
+})*/
 
 
 app.get("/api", (req, res) => {
-    res.json({"username": "Jimmy", "password": "feajflk"});
-})
+    res.send("Your nodemon server is currently active.");
+});
 
 
-app.get("/api/test1", (req, res) => {
-    res.json({"username": "John", "password": "askfej"});
-})
+app.post("/api/users/create", async (req, res) => {
+    const userInputEmail = req.body.email;
+
+    if (userInputEmail.indexOf("@") === -1) {
+        res.status(400).json({"Email": "Not in correct <name>@<service>.<domain> format."});
+        return;
+    }
+
+    const user = await prisma.user.findUnique({
+        where: {
+            email: userInputEmail,
+        },
+    });
+
+    if (!user) {
+        const new_user = await prisma.user.create(
+            {
+                data: {
+                    email: req.body.email,
+                    username: req.body.username,
+                    password: req.body.password,
+                }
+            }
+        );
+        res.redirect("/account/login");
+    } else {
+        res.status(400).json({[userInputEmail]: "already exists."})
+    }
+});
 
 
-app.get("/admin", (req, res) => {
-    res.json({"username": "Jay", "password": "ckefje"});
-})
+app.post("/api/users/login", async (req, res) => {
+    const userInputEmail = req.body.email;
+
+    if (userInputEmail.indexOf("@") === -1) {
+        res.status(400).json({"Email": "Not in correct <name>@<service>.<domain> format."});
+        return;
+    }
+
+    const user = await prisma.user.findUnique({
+        where: {
+            email: userInputEmail,
+        },
+    });
+
+    if (user) {
+        if (req.body.password === user.password) {
+            const token = generateToken(user.username);
+            res.cookie("token", token, {httpOnly: true});
+            res.redirect("/");
+        } else {
+            res.status(400).json({[userInputEmail]: "account details are incorrect."})
+        }
+    } else {
+        res.status(400).json({[userInputEmail]: "does not exist."})
+    }
+});
 
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+  console.log(`Example app listening on port ${port}.`)
+});

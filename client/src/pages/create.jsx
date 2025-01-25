@@ -3,7 +3,7 @@ export default function CreatePage() {
         <div className="flex-grow text-black flex flex-col gap-20 p-10">
             <h1 className="font-bold text-5xl">Create</h1>
 
-            <form className="w-40 sm:w-96 self-center bg-slate-200 flex flex-col gap-10 p-5 shadow-xl rounded">
+            <form action="/api/users/create" method="post" className="w-40 sm:w-96 self-center bg-slate-200 flex flex-col gap-10 p-5 shadow-xl rounded">
                 <h1 className="text-xl font-bold uppercase">Join <em>shoes</em> now!</h1>
                 <div className="flex flex-col gap-1">
                     <label className="font-bold uppercase">Email</label>

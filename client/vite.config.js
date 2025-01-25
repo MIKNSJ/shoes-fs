@@ -10,9 +10,6 @@ export default defineConfig({
             '/api': {
                 target: 'http://server:8080/',
             },
-            '/admin': {
-                target: 'http://server:8080/',
-            }
         }
     }
 })
