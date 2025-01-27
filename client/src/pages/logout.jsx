@@ -19,7 +19,7 @@ export default function LogoutPage() {
 
                 <div className="flex justify-between items-center">
                     <button onClick={handleSignOut} className="bg-red-500 px-3 py-2 rounded font-bold uppercase">Yes</button>
-                    <button className="bg-green-500 px-3 py-2 rounded font-bold uppercase">No</button>
+                    <a className="bg-green-500 px-3 py-2 rounded font-bold uppercase">No</a>
                 </div>
             </div>
         </div>

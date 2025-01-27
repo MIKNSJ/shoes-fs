@@ -4,17 +4,39 @@ import { LuLogIn } from "react-icons/lu";
 import { CgArrowsShrinkH } from "react-icons/cg";
 import { TbShoe } from "react-icons/tb";
 import { IoWalletOutline } from "react-icons/io5";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MyOrders from "../pages/my_orders.jsx"
 
 
 
-export default function Sidebar() {
+export default function Sidebar({authState}) {
     const [navStatus, setNavStatus] = useState(true);
     const [numItems, setNumItems] = useState(5);
 
     const toggleNav = () => {
         setNavStatus(!navStatus);
+    }
+
+    function toggleLoginStatus() {
+        const divList = [];
+    
+        if (authState === null) {
+            divList.push(
+                <a key={0} href="/account/login" className="font-liber text-2xl flex items-center gap-5 duration-500 hover:bg-neutral-700 p-2 rounded">
+                    <span><LuLogIn size={30}/></span>
+                    {navStatus ? <h1 className="hidden lg:block whitespace-nowrap">Log In</h1> : null}
+                </a>
+            );
+        } else {
+            divList.push(
+                <a key={0} href="/account/logout" className="font-liber text-2xl flex items-center gap-5 duration-500 hover:bg-neutral-700 p-2 rounded">
+                    <span><LuLogIn size={30} className="rotate-180"/></span>
+                    {navStatus ? <h1 className="hidden lg:block whitespace-nowrap">Log Out</h1> : null}
+                </a>
+            );
+        }
+    
+        return divList;
     }
 
     return (
@@ -46,10 +68,7 @@ export default function Sidebar() {
                     </a>
                 </div>
 
-                <a href="/account/login" className="font-liber text-2xl flex items-center gap-5 duration-500 hover:bg-neutral-700 p-2 rounded">
-                    <span><LuLogIn size={30}/></span>
-                    {navStatus ? <h1 className="hidden lg:block whitespace-nowrap">Log In</h1> : null}
-                </a>
+                {toggleLoginStatus()}
             </div>
         </div>
     )

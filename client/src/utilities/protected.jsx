@@ -3,27 +3,21 @@ import { Outlet, Navigate } from "react-router";
 
 
 
+// Remember that useEffect runs after initial render, so authState at the first
+// run === undefined which is not strictly equal to null.
 const ProtectedRoutes = () => {
-    const [authState, setAuthState] = useState(null);
+    const [authState, setAuthState] = useState();
 
     const getAuthState = async () => {
         const response = await fetch("/api/users");
         const data = await response.json();
-        console.log(data.username)
         setAuthState(data.username);
-        return;
-    }
-
-    const loadAuthState = async () => {
-        const data = await getAuthState();
-        setAuthState(data);
     }
 
     useEffect(() => {
         getAuthState();
-    }, [authState]);
+    }, []);
 
-    console.log(authState);
     if (authState !== null) {
         return <Outlet />
     }

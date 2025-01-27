@@ -13,10 +13,22 @@ import { useState, useEffect } from "react";
 
 
 function App() {
+    const [authState, setAuthState] = useState(null);
+
+    const getAuthState = async () => {
+        const response = await fetch("/api/users");
+        const data = await response.json();
+        setAuthState(data.username);
+    }
+
+    useEffect(() => {
+        getAuthState();
+    }, []);
+
     return (
         <>
             <div className="flex">
-                <Sidebar />
+                <Sidebar authState={authState} />
 
                 <div className="flex-grow flex flex-col">
                     <Routes>
