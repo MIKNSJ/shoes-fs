@@ -29,6 +29,8 @@ function generateItemDivs() {
 
 
 export default function TransactionsPage() {
+    const response = async () => await fetch("/api/users");
+
     return (
         <div className="flex-grow text-black flex flex-col gap-20 p-10">
             <h1 className="font-bold text-4xl sm:text-5xl">Transactions</h1>

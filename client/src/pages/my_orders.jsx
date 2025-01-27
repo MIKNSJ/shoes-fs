@@ -1,6 +1,6 @@
 import { FaRegTrashCan } from "react-icons/fa6";
 import { FaPlus, FaMinus } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 
 
@@ -48,8 +48,7 @@ function generateItemDivs() {
 
 
 export default function MyOrdersPage() {
-    const [totalPrice, setTotalPrice] = useState(100)
-
+    const [totalPrice, setTotalPrice] = useState(100);
 
     return (
         <div className="flex-grow text-black flex flex-col gap-20 p-10">

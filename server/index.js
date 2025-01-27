@@ -1,7 +1,7 @@
 import express from "express";
 import { Prisma, PrismaClient } from '@prisma/client';
 import dotenv from "dotenv";
-import {generateToken} from "./middleware.js"
+import { generateToken, checkAuthStatus } from "./middleware.js"
 import cookieParser from "cookie-parser";
 const app = express();
 const port = 8080;
@@ -25,12 +25,16 @@ app.get("/api", (req, res) => {
 });
 
 
+app.get("/api/users", async (req, res) => {
+    return checkAuthStatus(req, res);
+})
+
+
 app.post("/api/users/create", async (req, res) => {
     const userInputEmail = req.body.email;
 
     if (userInputEmail.indexOf("@") === -1) {
-        res.status(400).json({"Email": "Not in correct <name>@<service>.<domain> format."});
-        return;
+        return res.status(400).json({Email: "Not in correct <name>@<service>.<domain> format."});
     }
 
     const user = await prisma.user.findUnique({
@@ -60,8 +64,7 @@ app.post("/api/users/login", async (req, res) => {
     const userInputEmail = req.body.email;
 
     if (userInputEmail.indexOf("@") === -1) {
-        res.status(400).json({"Email": "Not in correct <name>@<service>.<domain> format."});
-        return;
+        return res.status(400).json({Email: "Not in correct <name>@<service>.<domain> format."});
     }
 
     const user = await prisma.user.findUnique({
@@ -82,6 +85,11 @@ app.post("/api/users/login", async (req, res) => {
         res.status(400).json({[userInputEmail]: "does not exist."})
     }
 });
+
+
+app.get("/api/users/logout", async (req, res) => {
+    return res.clearCookie("token").status(200).json({User: "SIGNED OUT"});
+})
 
 
 app.listen(port, () => {
