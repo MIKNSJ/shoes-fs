@@ -7,7 +7,8 @@ export default function LogoutPage() {
 
     async function handleSignOut() {
         const response = await fetch("/api/users/logout");
-        return navigate("/");
+        navigate("/");
+        navigate(0);
     };
     
     return (
@@ -19,7 +20,7 @@ export default function LogoutPage() {
 
                 <div className="flex justify-between items-center">
                     <button onClick={handleSignOut} className="bg-red-500 px-3 py-2 rounded font-bold uppercase">Yes</button>
-                    <a className="bg-green-500 px-3 py-2 rounded font-bold uppercase">No</a>
+                    <a href="/" className="bg-green-500 px-3 py-2 rounded font-bold uppercase">No</a>
                 </div>
             </div>
         </div>
