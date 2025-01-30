@@ -3,9 +3,11 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import dotenv from "dotenv";
 import { generateToken, checkAuthStatus } from "./middleware.js"
 import cookieParser from "cookie-parser";
+import bcrypt from "bcryptjs";
 const app = express();
 const port = 8080;
 const prisma = new PrismaClient();
+const saltRounds = 10;
 
 
 
@@ -44,15 +46,19 @@ app.post("/api/users/create", async (req, res) => {
     });
 
     if (!user) {
+        const plainPassword = req.body.password;
+        const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
+
         const new_user = await prisma.user.create(
             {
                 data: {
                     email: req.body.email,
                     username: req.body.username,
-                    password: req.body.password,
+                    password: hashedPassword,
                 }
             }
         );
+        
         res.redirect("/account/login");
     } else {
         res.status(400).json({[userInputEmail]: "already exists."})
@@ -74,7 +80,11 @@ app.post("/api/users/login", async (req, res) => {
     });
 
     if (user) {
-        if (req.body.password === user.password) {
+        const plainPassword = req.body.password;
+        const hashedPassword = user.password;
+        const validResult = await bcrypt.compare(plainPassword, hashedPassword);
+
+        if (validResult) {
             const token = generateToken(user.username);
             res.cookie("token", token, {httpOnly: true});
             res.redirect("/");

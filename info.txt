@@ -14,6 +14,10 @@ the docker service container instead of localhost. After the schema is
 migrated, then you have to change the HOST address back to the name of the
 docker service container in order for Express JS to connect to Prisma.
 
+There is also another issue where generating hashed passwords using the
+"bcrypt" library will throw a Vite socket error (timed out). Do yourself a
+favor and use "bcryptjs" instead.
+
 Also, there appears to be a potential security risk if you run PostgreSQL with
 basic credentials. The security risk being a cryptocurrency miner spiking your
 CPU container usage to over 100%.
@@ -31,9 +35,10 @@ You may notice that you cannot stop the running docker instance while being in
 the terminal. To fix this, open a new terminal instance to input docker
 commands, start docker containers in internative mode, or use Docker Desktop.
 
-Please note that he node version imported for Docker is important as older
+Please note that the node version imported for Docker is important as older
 verisons may not support React Router v7 and/or Vite applications.
 
 If your Docker container seems to be not behaving properly or you made numerous
 builds, then run docker system prune --all --volumes to free up storage and to
-reset images.
+reset images. Most commonly I found that if a file cannot see installed
+packages or suddenly throws an error, then you should reset.
