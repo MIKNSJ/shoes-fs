@@ -11,6 +11,7 @@ export function generateToken(username) {
 }
 
 
+// for frontend
 export function checkAuthStatus(req, res) {
     const token = req.cookies.token;
     
@@ -23,5 +24,22 @@ export function checkAuthStatus(req, res) {
         return res.status(200).json({username: data.username});
     } catch {
         return res.status(403).json({username: null}); // user session has expired
+    }
+}
+
+
+// for backend
+export function checkCurrentUser(req, res) {
+    const token = req.cookies.token;
+    
+    if (!token) {
+        return null;
+    }
+
+    try {
+        const data = jwt.verify(token, process.env.TOKEN_SECRET);
+        return data.username;
+    } catch {
+        return null;
     }
 }

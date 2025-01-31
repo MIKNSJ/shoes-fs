@@ -7,14 +7,14 @@
 
 
 generator client {
-  provider = "prisma-client-js"
-  binaryTargets   = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+    provider = "prisma-client-js"
+    binaryTargets   = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
 }
 
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 
@@ -28,23 +28,37 @@ model Item {
 }
 
 
-model CartItem {
+model Cart {
     id     Int     @id @default(autoincrement())
+    product_id Int @unique
     name String @unique
     title String
-    total_price Int
+    price Int
     image String
     quantity Int
-    userCartId Int
-    userTransId Int
-    userCart String
-    userTrans String
+    user_cart_name String
+    user_cart User @relation(fields: [user_cart_name], references: [username])
+}
+
+
+model Transaction {
+    id     Int     @id @default(autoincrement())
+    product_id Int @unique
+    name String @unique
+    title String
+    price Int
+    image String
+    quantity Int
+    user_trans_name String
+    user_trans User @relation(fields: [user_trans_name], references: [username])
 }
 
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  username    String @unique
-  password   String
+    id      Int      @id @default(autoincrement())
+    email   String   @unique
+    username    String @unique
+    password   String
+    cart Cart[]
+    transactions Transaction[]
 }

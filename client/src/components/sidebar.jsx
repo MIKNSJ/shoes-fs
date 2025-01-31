@@ -9,9 +9,13 @@ import MyOrders from "../pages/my_orders.jsx"
 
 
 
-export default function Sidebar({authState}) {
+export default function Sidebar({authState, cart}) {
     const [navStatus, setNavStatus] = useState(true);
-    const [numItems, setNumItems] = useState(5);
+    const [numItems, setNumItems] = useState(0);
+
+    useEffect(() => {
+        setNumItems(cart.length);
+    }, [])
 
     const toggleNav = () => {
         setNavStatus(!navStatus);

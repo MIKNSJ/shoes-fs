@@ -16,6 +16,7 @@ import { useState, useEffect } from "react";
 function App() {
     const [authState, setAuthState] = useState();
     const [items, setItems] = useState([]);
+    const [cart, setCart] = useState([]);
 
     const getAuthState = async () => {
         const response = await fetch("/api/users");
@@ -29,21 +30,28 @@ function App() {
         setItems(dataTwo);
     }
 
+    const getCartItems = async() => {
+        const responseThree = await fetch("/api/users/items");
+        const dataThree = await responseThree.json();
+        setCart(dataThree);
+    }
+
     useEffect(() => {
         getAuthState();
         getItems();
+        getCartItems();
     }, []);
 
     return (
         <>
             <div className="flex">
-                <Sidebar authState={authState} />
+                <Sidebar authState={authState} cart={cart} />
 
                 <div className="flex-grow flex flex-col">
                     <Routes>
                         <Route path="/" element={<BrowsePage items={items} />}/>
                         <Route element={<ProtectedRoutes authState={authState} />}>
-                            <Route path="/account/orders" element={<MyOrdersPage />}/>
+                            <Route path="/account/orders" element={<MyOrdersPage cart={cart} />}/>
                             <Route path="/account/transactions" element={<TransactionPage />}/>
                         </Route>
 

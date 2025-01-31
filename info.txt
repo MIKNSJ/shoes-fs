@@ -10,13 +10,20 @@ commands, but those options did not work for me or was unnecessary for now.
 There is issue currently where either Express JS or Prisma can fail to connect
 to the database connection defined in the .env file under DATABASE_URL.
 Prisma will fail to migrate schema.prisma if the HOST address is the name of
-the docker service container instead of localhost. After the schema is
+the docker service container instead of localhost or IP: 127.0.0.1. After the schema is
 migrated, then you have to change the HOST address back to the name of the
 docker service container in order for Express JS to connect to Prisma.
 
 There is also another issue where generating hashed passwords using the
 "bcrypt" library will throw a Vite socket error (timed out). Do yourself a
-favor and use "bcryptjs" instead.
+favor and use "bcryptjs" instead. You may have bcryptjs import errors where the
+file cannot see that it was installed so running
+npm i --save-dev @types/bcryptjs should fix that issue.
+
+Do yourself a favor and if you want to render multiple same components, then
+use Array.prototype.map() instead of a conventional for loop. If you try to
+render data from your backend to the frontend containing a for loop, then it
+may cause a undefined error.
 
 Also, there appears to be a potential security risk if you run PostgreSQL with
 basic credentials. The security risk being a cryptocurrency miner spiking your

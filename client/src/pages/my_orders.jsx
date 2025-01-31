@@ -4,51 +4,50 @@ import { useState, useEffect } from "react";
 
 
 
-function generateItemDivs() {
-    var itemDivs = [];
+export default function MyOrdersPage({cart}) {
+    const [totalPrice, setTotalPrice] = useState(0);
 
-    for (var i = 0; i < 8; i++) {
-        itemDivs.push(
-            <div key={i} className="flex">
-                <div className="bg-slate-50 flex items-center gap-5 sm:gap-10 shadow-xl rounded p-5">
-                    <div className="flex flex-col items-center gap-3">
-                        <button>
-                            <FaPlus size={30}/>
-                        </button>
-
-                        <p className="font-bold uppercase">1</p>
-
-                        <button>
-                            <FaMinus size={30}/>
-                        </button>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-10">
-                        <div className="flex w-24">
-                            <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" />
-                        </div>
-
-                        <p className="text-xs sm:text-base font-bold uppercase">Air Jordans</p>
-
-                        <div className="flex items-center gap-3 sm:gap-10">
-                            <p className="text-xs sm:text-base font-bold uppercase"> Price: $100 </p>
-
+    function generateItemDivs() {
+        var itemDivs = [];
+    
+        for (var i = 0; i < cart.length; i++) {
+            itemDivs.push(
+                <div key={i} className="flex">
+                    <div className="bg-slate-50 flex items-center gap-5 sm:gap-10 shadow-xl rounded p-5">
+                        <div className="flex flex-col items-center gap-3">
                             <button>
-                                <FaRegTrashCan size={30}/>
+                                <FaPlus size={30}/>
                             </button>
+    
+                            <p className="font-bold uppercase">{cart[i].quantity}</p>
+    
+                            <button>
+                                <FaMinus size={30}/>
+                            </button>
+                        </div>
+    
+                        <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-10">
+                            <div className="flex w-24">
+                                <img src={cart[i].image} alt="Shoes" />
+                            </div>
+    
+                            <p className="text-xs sm:text-base font-bold uppercase">{cart[i].title}</p>
+    
+                            <div className="flex items-center gap-3 sm:gap-10">
+                                <p className="text-xs sm:text-base font-bold uppercase"> Price: ${cart[i].price * cart[i].quantity} </p>
+    
+                                <button>
+                                    <FaRegTrashCan size={30}/>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        )
+            )
+        }
+    
+        return itemDivs;
     }
-
-    return itemDivs
-}
-
-
-export default function MyOrdersPage() {
-    const [totalPrice, setTotalPrice] = useState(100);
 
     return (
         <div className="flex-grow text-black flex flex-col gap-20 p-10">
