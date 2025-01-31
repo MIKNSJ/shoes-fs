@@ -1,0 +1,72 @@
+// These items were manually added to the database.
+
+
+
+const items = [
+    {
+        name: "yeezy-350",
+        title: "Yeezy 350",
+        description: "A comfortable shoe for your daily activites.",
+        price: 250,
+        image: "https://cdn.shopify.com/s/files/1/2358/2817/products/yeezy-boost-350-v2-yecheil-non-reflective-990666.png?v=1638814885",
+    },
+
+    {
+        name: "air-jordan-12-gold",
+        title: "Air Jordan 12 - Gold",
+        description: "A comfortable shoe for your daily activites.",
+        price: 220,
+        image: "https://impossiblekicks.com/cdn/shop/files/6V2A2542_1946x_2659ae6e-323b-4d33-9c8a-3236269782c9_1946x.jpg?v=1705663824",
+    },
+
+    {
+        name: "tatum-1",
+        title: "Tatum 1",
+        description: "A comfortable shoe for your daily activites.",
+        price: 125,
+        image: "https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2023%2F11%2Fjordan-tatum-1-green-strike-dz3324-003-release-info-001.jpg?q=75&w=800&cbr=1&fit=max",
+    },
+
+    {
+        name: "kobe-8",
+        title: "Kobe 8",
+        description: "A comfortable shoe for your daily activites.",
+        price: 200,
+        image: "https://cdn.eql.media/draw-api/67d8a30a-71b1-4cbd-bd5c-9b13588d94be/21494317-e3b5-40ea-a2fd-d98cbe25f101.jpeg?auto=format&ar=1%3A1&fit=crop&ixlib=react-9.7.0&w=580",
+    },
+
+    {
+        name: "nike-air-max",
+        title: "Nike Air Max",
+        description: "A comfortable shoe for your daily activites.",
+        price: 90,
+        image: "https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/8bf8448b-1595-4ad8-b872-3aaa5cc489f0/NIKE+AIR+MAX+SC.png",
+    },
+
+    {
+        name: "ant-edwards-1",
+        title: "Anthony Edwards 1",
+        description: "A comfortable shoe for your daily activites.",
+        price: 120,
+        image: "https://sneakernews.com/wp-content/uploads/2024/09/adidas-anthony-edwards-1-georgia-ig6669-release-date-4.jpg?w=1140",
+    },
+
+    {
+        name: "ua-project-rock",
+        title: "Under Armour - Project Rock",
+        description: "A comfortable shoe for your daily activites.",
+        price: 150,
+        image: "https://static.ftshp.digital/img/p/1/0/8/6/4/2/4/1086424-full_product.jpg",
+    },
+
+    {
+        name: "golden-walkers",
+        title: "Golden Walkers",
+        description: "Walk with luxury.",
+        price: 1000000,
+        image: "https://static.nike.com/a/images/w_1280,q_auto,f_auto/cdfaa51e-8638-4c15-8378-48d8f22bffa8/air-max-97-metallic-gold-release-date.jpg",
+    },
+];
+
+
+export { items };

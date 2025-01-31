@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 
 function App() {
     const [authState, setAuthState] = useState();
+    const [items, setItems] = useState([]);
 
     const getAuthState = async () => {
         const response = await fetch("/api/users");
@@ -22,8 +23,15 @@ function App() {
         setAuthState(data.username);
     }
 
+    const getItems = async() => {
+        const responseTwo = await fetch("/api/items");
+        const dataTwo = await responseTwo.json();
+        setItems(dataTwo);
+    }
+
     useEffect(() => {
         getAuthState();
+        getItems();
     }, []);
 
     return (
@@ -33,7 +41,7 @@ function App() {
 
                 <div className="flex-grow flex flex-col">
                     <Routes>
-                        <Route path="/" element={<BrowsePage />}/>
+                        <Route path="/" element={<BrowsePage items={items} />}/>
                         <Route element={<ProtectedRoutes authState={authState} />}>
                             <Route path="/account/orders" element={<MyOrdersPage />}/>
                             <Route path="/account/transactions" element={<TransactionPage />}/>
@@ -52,5 +60,6 @@ function App() {
         </>
     )
 }
+
 
 export default App

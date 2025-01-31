@@ -4,11 +4,13 @@ import dotenv from "dotenv";
 import { generateToken, checkAuthStatus } from "./middleware.js"
 import cookieParser from "cookie-parser";
 import bcrypt from "bcryptjs";
+
+
+
 const app = express();
 const port = 8080;
 const prisma = new PrismaClient();
 const saltRounds = 10;
-
 
 
 dotenv.config(); // retrieve contents from .env
@@ -99,6 +101,12 @@ app.post("/api/users/login", async (req, res) => {
 
 app.get("/api/users/logout", async (req, res) => {
     return res.clearCookie("token").status(200).json({User: "SIGNED OUT"});
+})
+
+
+app.get("/api/items", async (req, res) => {
+    const allItems = await prisma.item.findMany();
+    return res.status(200).send(allItems);
 })
 
 
