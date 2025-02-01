@@ -5,7 +5,7 @@ import { generateToken, checkAuthStatus, checkCurrentUser } from "./middleware.j
 import { calcNumItems, calcTotalPrice } from "./utilities.js";
 import cookieParser from "cookie-parser";
 import bcrypt from "bcryptjs";
-
+import Stripe from "stripe";
 
 
 const app = express();
@@ -18,6 +18,7 @@ dotenv.config(); // retrieve contents from .env
 app.use(cookieParser());
 app.use(express.json()); // for json
 app.use(express.urlencoded({ extended: true })); // for form data
+const stripe = Stripe(process.env.STRIPE_KEY);
 
 
 /*app.get("/", (req, res) => {
@@ -386,7 +387,47 @@ app.get("/api/users/items", async (req, res) => {
 })
 
 
-app.post("/api/users/items/checkout", async (req, res) => {
+app.get("/api/checkout", async (req, res) => {
+    const currentUser = checkCurrentUser(req, res);
+
+    if (!currentUser) {
+        return res.status(403).json({User: "NOT SIGNED IN"});
+    }
+
+    const allUserItems = await prisma.cart.findMany(
+        {
+            where: {
+                user_cart_name: currentUser,
+            },
+        },
+    );
+
+    const itemsList = allUserItems.map((item) => {
+        return {
+            price_data: {
+                currency: "USD",
+                product_data: {
+                    name: item.title,
+                },
+                unit_amount: item.price * 100,
+            },
+            quantity: item.quantity,
+        }
+    })
+
+    const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        payment_method_types: ["card"],
+        line_items: itemsList,
+        success_url: "http://localhost:8080/api/checkout/success",
+        cancel_url: "http://localhost:8080/api/checkout/failed",
+    });
+
+    return res.status(200).json({sessionId: session.id});
+})
+
+
+app.get("/api/checkout/success", async (req, res) => {
     const currentUser = checkCurrentUser(req, res);
 
     if (!currentUser) {
@@ -425,8 +466,13 @@ app.post("/api/users/items/checkout", async (req, res) => {
          }
      );
 
-    return res.status(200).redirect("/");
-})
+    return res.status(200).redirect("http://localhost:5173/account/orders/success");
+});
+
+
+app.get("/api/checkout/failed", async (req, res) => {
+    return res.status(400).redirect("http://localhost:5173/account/orders/failed");
+});
 
 
 app.get("/api/users/transactions", async (req, res) => {
@@ -448,5 +494,40 @@ app.get("/api/users/transactions", async (req, res) => {
 
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}.`)
+    console.log(`Example app listening on port ${port}.`)
 });
+
+
+/*app.get("/test/stripe/", async (req, res) => {
+    const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        payment_method_types: ["card"],
+        line_items: [
+            {
+                price_data: {
+                    currency: "USD",
+                    product_data: {
+                        name: 'TEST PRODUCT'
+                    },
+                    unit_amount: 5 * 100,
+                },
+                quantity: 1,
+
+            },
+
+            {
+                price_data: {
+                    currency: "USD",
+                    product_data: {
+                        name: 'TEST PRODUCT 2'
+                    },
+                    unit_amount: 10.25 * 100,
+                },
+                quantity: 6,
+            },
+        ],
+        success_url: 'http://localhost:8080/api',
+    });
+
+    return res.status(200).redirect(session.url);
+})*/

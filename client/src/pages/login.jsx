@@ -18,7 +18,6 @@ export default function LoginPage() {
                 <input className="p-2 bg-green-500 font-bold uppercase rounded" type="submit" value="Login"/>
 
                 <a href="/account/create" className="self-end text-blue-500">Create an account here...</a>
-                <a href="/account/logout" className="self-end text-blue-500">Check Logout Page here...</a>
             </form>
         </div>
     )

@@ -1,5 +1,6 @@
 import { FaRegTrashCan } from "react-icons/fa6";
 import { FaPlus, FaMinus } from "react-icons/fa";
+import { loadStripe } from '@stripe/stripe-js';
 import { useState, useEffect } from "react";
 
 
@@ -17,6 +18,16 @@ export default function MyOrdersPage({cart}) {
 
     async function handleDelete(itemId) {
         const deleteItem = await fetch(`../api/items/${itemId}/delete`);
+        return;
+    }
+
+    async function handleCheckout() {
+        const stripe = await loadStripe(import.meta.env.VITE_STRIPE_KEY);
+        const responseCheckout = await fetch("../api/checkout");
+        const data = await responseCheckout.json();
+        const result = stripe.redirectToCheckout({
+            sessionId: data.sessionId,
+        })
         return;
     }
 
@@ -74,26 +85,10 @@ export default function MyOrdersPage({cart}) {
                         <p className="font-bold text-3xl">${cart.totalPrice}</p>
                     </div>
 
-                    <form action="/api/users/items/checkout" method="POST" className="bg-slate-50 flex flex-col gap-10">
-                        <h1 className="text-xl font-bold uppercase">Pay with card!</h1>
-                        <div className="flex flex-col gap-1">
-                            <label className="font-bold uppercase">Card Number</label>
-                            <input type="string" name="card_number" className="bg-white rounded p-2" placeholder="4242424242424242" autoComplete="off" required/>
-                        </div>
-
-                        <div className="flex flex-col gap-1">
-                            <label className="font-bold uppercase">Security Code</label>
-                            <input type="string" name="card_cvc" className="bg-white rounded p-2" placeholder="CVC" autoComplete="off" required/>
-                        </div>
-
-                        <div className="flex flex-col gap-1">
-                            <label className="font-bold uppercase">Expire Date</label>
-                            <input type="string" name="card_expire_date" className="bg-white rounded p-2" placeholder="MM/YY" autoComplete="off" required/>
-                        </div>
-
-
-                        <input className="p-2 bg-green-500 font-bold uppercase rounded" type="submit" value="Checkout"/>
-                    </form>
+                    <div className="bg-slate-50 flex flex-col gap-10">
+                        <h1 className="text-xl font-bold uppercase">Pay with Stripe!</h1>
+                        <button className="p-2 bg-green-500 font-bold uppercase rounded" onClick={() => {handleCheckout()}}>Checkout</button>
+                    </div>
                 </div>
             </div>
         </div>

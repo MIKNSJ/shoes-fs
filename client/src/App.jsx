@@ -7,6 +7,8 @@ import CreatePage from "./pages/create.jsx";
 import LoginPage from "./pages/login.jsx";
 import LogoutPage from "./pages/logout.jsx";
 import Footer from "./components/footer.jsx";
+import Success from "./pages/success.jsx";
+import Failed from "./pages/failed.jsx";
 import ProtectedRoutes from "./utilities/protected.jsx";
 import RestrictedRoutes from "./utilities/restricted.jsx";
 import { useState, useEffect } from "react";
@@ -46,9 +48,12 @@ function App() {
     useEffect(() => {
         getAuthState();
         getItems();
-        getCartItems();
         getTransactions();
-    }, [cart]);
+    }, []);
+
+    useEffect(() => {
+        getCartItems();
+    }, []);
 
     return (
         <>
@@ -60,6 +65,8 @@ function App() {
                         <Route path="/" element={<BrowsePage items={items} />}/>
                         <Route element={<ProtectedRoutes authState={authState} />}>
                             <Route path="/account/orders" element={<MyOrdersPage cart={cart} />}/>
+                            <Route path="/account/orders/success" element={<Success />}/>
+                            <Route path="/account/orders/failed" element={<Failed />}/>
                             <Route path="/account/transactions" element={<TransactionPage transactions={transactions} />}/>
                         </Route>
 

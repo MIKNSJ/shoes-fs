@@ -23,7 +23,6 @@ export default function CreatePage() {
                 <input className="p-2 bg-blue-500 font-bold uppercase rounded" type="submit" value="Create"/>
 
                 <a href="/account/login" className="self-end text-blue-500">Login to your account here...</a>
-                <a href="/account/logout" className="self-end text-blue-500">Check Logout Page here...</a>
             </form>
         </div>
     )

@@ -25,6 +25,9 @@ use Array.prototype.map() instead of a conventional for loop. If you try to
 render data from your backend to the frontend containing a for loop, then it
 may cause a undefined error.
 
+Note that form requests will allow printing of json from Express if returned,
+however regular fetch requests will not.
+
 Also, there appears to be a potential security risk if you run PostgreSQL with
 basic credentials. The security risk being a cryptocurrency miner spiking your
 CPU container usage to over 100%.
