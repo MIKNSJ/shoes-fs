@@ -5,17 +5,11 @@ import { CgArrowsShrinkH } from "react-icons/cg";
 import { TbShoe } from "react-icons/tb";
 import { IoWalletOutline } from "react-icons/io5";
 import { useState, useEffect } from "react";
-import MyOrders from "../pages/my_orders.jsx"
 
 
 
 export default function Sidebar({authState, cart}) {
     const [navStatus, setNavStatus] = useState(true);
-    const [numItems, setNumItems] = useState(0);
-
-    useEffect(() => {
-        setNumItems(cart.length);
-    }, [])
 
     const toggleNav = () => {
         setNavStatus(!navStatus);
@@ -61,7 +55,7 @@ export default function Sidebar({authState, cart}) {
                     <a href="/account/orders" className="flex items-center gap-5 duration-500 hover:bg-neutral-700 p-2 rounded">
                         <span className="relative">
                             <RiShoppingBasketLine size={30}/>
-                            <p className="absolute -top-3 left-5 text-sm rounded font-bold bg-red-500 px-2 py-1">{numItems}</p>
+                            {authState ? <p className="absolute -top-3 left-5 text-sm rounded font-bold bg-red-500 px-2 py-1">{cart.numItems}</p> : null}
                         </span>
                         {navStatus ? <h1 className="hidden lg:block whitespace-nowrap">My Orders</h1> : null}
                     </a>

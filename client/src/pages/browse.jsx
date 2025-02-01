@@ -1,6 +1,7 @@
 export default function BrowsePage({items}) {
     async function handleAdd(itemId) {
         const addItem = await fetch(`./api/items/${itemId}/add`);
+        return;
     }
 
     const itemDivs = items.map((item, i) =>

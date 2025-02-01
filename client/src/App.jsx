@@ -17,6 +17,7 @@ function App() {
     const [authState, setAuthState] = useState();
     const [items, setItems] = useState([]);
     const [cart, setCart] = useState([]);
+    const [transactions, setTransactions] = useState([]);
 
     const getAuthState = async () => {
         const response = await fetch("/api/users");
@@ -36,11 +37,18 @@ function App() {
         setCart(dataThree);
     }
 
+    const getTransactions = async() => {
+        const responseFour = await fetch("/api/users/transactions");
+        const dataFour = await responseFour.json();
+        setTransactions(dataFour);
+    }
+
     useEffect(() => {
         getAuthState();
         getItems();
         getCartItems();
-    }, []);
+        getTransactions();
+    }, [cart]);
 
     return (
         <>
@@ -52,7 +60,7 @@ function App() {
                         <Route path="/" element={<BrowsePage items={items} />}/>
                         <Route element={<ProtectedRoutes authState={authState} />}>
                             <Route path="/account/orders" element={<MyOrdersPage cart={cart} />}/>
-                            <Route path="/account/transactions" element={<TransactionPage />}/>
+                            <Route path="/account/transactions" element={<TransactionPage transactions={transactions} />}/>
                         </Route>
 
                         <Route element={<RestrictedRoutes authState={authState} />}>

@@ -1,7 +1,8 @@
 import express from "express";
 import { Prisma, PrismaClient } from '@prisma/client';
 import dotenv from "dotenv";
-import { generateToken, checkAuthStatus, checkCurrentUser } from "./middleware.js"
+import { generateToken, checkAuthStatus, checkCurrentUser } from "./middleware.js";
+import { calcNumItems, calcTotalPrice } from "./utilities.js";
 import cookieParser from "cookie-parser";
 import bcrypt from "bcryptjs";
 
@@ -143,7 +144,7 @@ app.get("/api/items", async (req, res) => {
 })
 
 
-app.get(`/api/items/:id/add`, async (req, res) => {
+app.get("/api/items/:id/add", async (req, res) => {
     /**
      * Check if user is signed in to access this route.
      */
@@ -220,6 +221,143 @@ app.get(`/api/items/:id/add`, async (req, res) => {
 })
 
 
+app.get("/api/items/:id/subtract", async (req, res) => {
+    /**
+     * Check if user is signed in to access this route.
+     */
+    const currentUser = checkCurrentUser(req, res);
+
+    if (!currentUser) {
+        return res.status(403).json({User: "NEEDS TO BE SIGNED IN"});
+    }
+
+
+    /**
+     * Check if item exists in the database.
+     */
+    const itemId = Number(req.params.id);
+    const item = await prisma.item.findUnique(
+        {
+            where: {
+                id: itemId,
+            }
+        }
+    )
+
+    if (!item) {
+        return res.status(400).json({Item: "does not exist."})
+    }
+
+
+    /**
+     * Check if item is already in user's cart.
+     */
+    const cart = await prisma.cart.findUnique(
+        {
+            where: {
+                product_id: item.id, user_cart_name: currentUser
+            },
+        }
+    );
+
+    if (!cart) {
+        return res.status(400).json({Cart: "item does not exist inside cart."});
+    }
+
+
+    /**
+     * IF SUCCESS: Update the item in the user's cart.
+     * ELSE IF SUCESS: Remove the item in the user's cart.
+     * ELSE: Do nothing.
+     */
+    if (cart.quantity > 1) {
+        const newQuantity = cart.quantity - 1;
+        const updateCart = await prisma.cart.update(
+            {
+                where: {
+                    product_id: item.id, user_cart_name: currentUser,
+                },
+
+                data: {
+                    quantity: newQuantity,
+                },
+            }
+        );
+    } else if (cart.quantity === 1) {
+        const deleteCartItem = await prisma.cart.delete(
+            {
+                where: {
+                    product_id: item.id, user_cart_name: currentUser,
+                },
+            }
+        );
+    } else {
+        // Do nothing.
+    }
+
+    return res.status(200).json({Item: item});
+})
+
+
+app.get("/api/items/:id/delete", async (req, res) => {
+    /**
+     * Check if user is signed in to access this route.
+     */
+    const currentUser = checkCurrentUser(req, res);
+
+    if (!currentUser) {
+        return res.status(403).json({User: "NEEDS TO BE SIGNED IN"});
+    }
+
+
+    /**
+     * Check if item exists in the database.
+     */
+    const itemId = Number(req.params.id);
+    const item = await prisma.item.findUnique(
+        {
+            where: {
+                id: itemId,
+            }
+        }
+    )
+
+    if (!item) {
+        return res.status(400).json({Item: "item does not exist inside cart."})
+    }
+
+
+    /**
+     * Check if item is already in user's cart.
+     */
+    const cart = await prisma.cart.findUnique(
+        {
+            where: {
+                product_id: item.id, user_cart_name: currentUser
+            },
+        }
+    );
+
+    if (!cart) {
+        return res.status(400).json({Cart: "does not exist."});
+    }
+
+
+    /**
+     * Delete the item from the user's cart.
+     */
+    const deleteCartItem = await prisma.cart.delete(
+        {
+             where: {
+                 product_id: item.id, user_cart_name: currentUser,
+             },
+         }
+     );
+
+    return res.status(200).json({Item: item});
+});
+
+
 app.get("/api/users/items", async (req, res) => {
     const currentUser = checkCurrentUser(req, res);
 
@@ -235,7 +373,77 @@ app.get("/api/users/items", async (req, res) => {
         },
     );
 
-    return res.status(200).send(allUserItems);
+    const numItems = calcNumItems(allUserItems);
+    const totalPrice = calcTotalPrice(allUserItems);
+
+    return res.status(200).json(
+        {
+            items: allUserItems,
+            numItems: numItems,
+            totalPrice: totalPrice,
+        }
+    );
+})
+
+
+app.post("/api/users/items/checkout", async (req, res) => {
+    const currentUser = checkCurrentUser(req, res);
+
+    if (!currentUser) {
+        return res.status(403).json({User: "NOT SIGNED IN"});
+    }
+
+    const allUserItems = await prisma.cart.findMany(
+        {
+            where: {
+                user_cart_name: currentUser,
+            },
+        },
+    );
+
+    for (var i=0; i<allUserItems.length; i++) {
+        const newTransItem = await prisma.transaction.create(
+            {
+                data: {
+                    product_id: allUserItems[i].product_id,
+                    name: allUserItems[i].name,
+                    title: allUserItems[i].title,
+                    price: allUserItems[i].price,
+                    image: allUserItems[i].image,
+                    quantity: allUserItems[i].quantity,
+                    user_trans_name: currentUser,
+                }
+            }
+        );
+    }
+
+    const deleteCart = await prisma.cart.deleteMany(
+        {
+             where: {
+                 user_cart_name: currentUser,
+             },
+         }
+     );
+
+    return res.status(200).redirect("/");
+})
+
+
+app.get("/api/users/transactions", async (req, res) => {
+    const currentUser = checkCurrentUser(req, res);
+
+    if (!currentUser) {
+        return res.status(403).json({User: "NOT SIGNED IN"});
+    }
+
+    const allTransactions = await prisma.transaction.findMany(
+        {
+            where: {
+                user_trans_name: currentUser,
+            },
+        },
+    );
+    return res.status(200).send(allTransactions);
 })
 
 

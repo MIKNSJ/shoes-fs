@@ -43,8 +43,8 @@ model Cart {
 
 model Transaction {
     id     Int     @id @default(autoincrement())
-    product_id Int @unique
-    name String @unique
+    product_id Int
+    name String
     title String
     price Int
     image String
