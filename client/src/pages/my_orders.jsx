@@ -5,19 +5,22 @@ import { useState, useEffect } from "react";
 
 
 
-export default function MyOrdersPage({cart}) {
+export default function MyOrdersPage({cart, setCart}) {
     async function handleAdd(itemId) {
         const addItem = await fetch(`../api/items/${itemId}/add`);
+        setCart(cart.numItems + 1);
         return;
     }
 
     async function handleSubtract(itemId) {
         const subItem = await fetch(`../api/items/${itemId}/subtract`);
+        setCart(cart.numItems - 1);
         return;
     }
 
     async function handleDelete(itemId) {
         const deleteItem = await fetch(`../api/items/${itemId}/delete`);
+        setCart(cart.numItems); // setCart(<any number can go in here>)
         return;
     }
 

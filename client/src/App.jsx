@@ -9,6 +9,7 @@ import LogoutPage from "./pages/logout.jsx";
 import Footer from "./components/footer.jsx";
 import Success from "./pages/success.jsx";
 import Failed from "./pages/failed.jsx";
+import Error from "./pages/error.jsx";
 import ProtectedRoutes from "./utilities/protected.jsx";
 import RestrictedRoutes from "./utilities/restricted.jsx";
 import { useState, useEffect } from "react";
@@ -36,7 +37,9 @@ function App() {
     const getCartItems = async() => {
         const responseThree = await fetch("/api/users/items");
         const dataThree = await responseThree.json();
-        setCart(dataThree);
+        if (cart.numItems !== dataThree.numItems) {
+            setCart(dataThree);
+        }
     }
 
     const getTransactions = async() => {
@@ -53,7 +56,7 @@ function App() {
 
     useEffect(() => {
         getCartItems();
-    }, []);
+    }, [cart]);
 
     return (
         <>
@@ -62,19 +65,22 @@ function App() {
 
                 <div className="flex-grow flex flex-col">
                     <Routes>
-                        <Route path="/" element={<BrowsePage items={items} />}/>
+                        <Route path="/" element={<BrowsePage items={items} cart={cart} setCart={setCart} />}/>
+
                         <Route element={<ProtectedRoutes authState={authState} />}>
-                            <Route path="/account/orders" element={<MyOrdersPage cart={cart} />}/>
+                            <Route path="/account/orders" element={<MyOrdersPage cart={cart} setCart={setCart} />}/>
                             <Route path="/account/orders/success" element={<Success />}/>
                             <Route path="/account/orders/failed" element={<Failed />}/>
                             <Route path="/account/transactions" element={<TransactionPage transactions={transactions} />}/>
+                            <Route path="/account/logout" element={<LogoutPage />}/>
                         </Route>
 
                         <Route element={<RestrictedRoutes authState={authState} />}>
                             <Route path="/account/create" element={<CreatePage />}/>
                             <Route path="/account/login" element={<LoginPage />}/>
                         </Route>
-                        <Route path="/account/logout" element={<LogoutPage />}/>
+
+                        <Route path="*" element={<Error />}/>
                     </Routes>
                     
                     <Footer />

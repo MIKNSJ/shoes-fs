@@ -1,5 +1,0 @@
-Hashed passwords (bycrpt or crypto).
-Fix protected routes for not signed and if signed in.
-Add items to db, and fetch for Browse page.
-User orders and transactions functionality.
-Stripe API.

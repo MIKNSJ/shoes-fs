@@ -1,6 +1,7 @@
-export default function BrowsePage({items}) {
+export default function BrowsePage({items, cart, setCart}) {
     async function handleAdd(itemId) {
         const addItem = await fetch(`./api/items/${itemId}/add`);
+        setCart(cart.numItems + 1);
         return;
     }
 
